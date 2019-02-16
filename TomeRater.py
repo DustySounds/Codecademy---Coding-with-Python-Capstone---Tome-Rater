@@ -128,8 +128,7 @@ class TomeRater:
             self.isbns.append(isbn)
             book = Book(title, isbn, price)
         else:
-            print("The ISBN {i} is already taken".format(i = isbn))
-            book = "Book entry of {t} failed due to duplicated ISBN".format(t = title)
+            raise Exception("The ISBN {i} is already taken.".format(i = isbn))
         return book
         
     def create_novel(self, title, author, isbn, price = 0):
@@ -137,8 +136,7 @@ class TomeRater:
             self.isbns.append(isbn)
             book = Fiction(title, author, isbn, price)
         else:
-            print("The ISBN {i} is already taken".format(i = isbn))
-            book = "Book entry of {t} failed due to duplicated ISBN".format(t = title)
+            raise Exception("The ISBN {i} is already taken.".format(i = isbn))
         return book
         
     def create_non_fiction(self, title, subject, level, isbn, price = 0):
@@ -146,8 +144,7 @@ class TomeRater:
             self.isbns.append(isbn)
             book = Non_Fiction(title, subject, level, isbn, price)
         else:
-            print("The ISBN {i} is already taken".format(i = isbn))
-            book = "Book entry of {t} failed due to duplicated ISBN".format(t = title)
+            raise Exception("The ISBN {i} is already taken.".format(i = isbn))
         return book
         
     # Set new ISBNs from here to insure no duplicates are made from changing the book objects directly by referencing to the TomeRater object's ISBN list:
