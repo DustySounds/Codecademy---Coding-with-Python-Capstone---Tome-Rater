@@ -43,6 +43,8 @@ Tome_Rater.add_book_to_user(novel1, "david@computation.org", 3)
 # Add users with an invalid email:
 #Tome_Rater.add_user("Burt Bob", "burters.com")
 #Tome_Rater.add_user("Burt Bob", "burters@bob.coms")
+#Tome_Rater.add_user("Burt Bob", "burters@bob.org.com")
+#Tome_Rater.add_user("Burt Bob", "burt@ers@bob.com")
 
 # Test TomeRater Object print:
 #print(Tome_Rater)
@@ -75,7 +77,7 @@ Tome_Rater.add_book_to_user(novel1, "david@computation.org", 3)
 
 # Test my function of Get Book by ISBN:
 print(Tome_Rater.get_book_by_isbn(10001000)) # Soft Rains
-print(Tome_Rater.get_book_by_isbn(1903847109)) # Invalid
+#print(Tome_Rater.get_book_by_isbn(1903847109)) # Invalid
 
 #Uncomment these to test your functions:
 #Tome_Rater.print_catalog()

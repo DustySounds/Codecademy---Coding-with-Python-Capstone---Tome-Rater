@@ -1,3 +1,6 @@
+# Import regular expressions
+import re
+
 # User class definition
 class User:
     def __init__(self, name, email):
@@ -166,10 +169,17 @@ class TomeRater:
                 self.books[book] = 1
             else:
                 self.books[book] += 1
-                
+    
     def add_user(self, name, email, user_books = None):
-        if '@' in email:
-            if email[-4:] == '.com' or email[-4:] == '.edu' or email[-4:] == '.org':
+        com_search = re.search(r'\.com', email)
+        edu_search = re.search(r'\.edu', email)
+        org_search = re.search(r'\.org', email)
+        
+        if email.count('@') == 1:
+            if (    email[-4:] == '.com' and edu_search is None and org_search is None
+                 or email[-4:] == '.edu' and com_search is None and org_search is None
+                 or email[-4:] == '.org' and com_search is None and edu_search is None
+               ):
                 user = User(name, email)
                 if self.users.get(email) is None:
                     self.users[email] = user
@@ -183,7 +193,7 @@ class TomeRater:
             else:
                 print("The entered email address must end in either '.com' '.edu' or '.org'")
         else:
-            print("The entered email address must include the '@' sign.")
+            print("The entered email address must include a single '@' sign.")
             
     def print_catalog(self):
         for book in list(self.books):
@@ -273,7 +283,7 @@ class TomeRater:
     # My own idea of improving TomeRater:
     def get_book_by_isbn(self, isbn):
         if isbn not in self.isbns:
-            print("The ISBN {i} was not found in this instance.".format(i = isbn))
+            raise Exception("The ISBN {i} was not found in this instance.".format(i = isbn))
         else:
             title = [book.title for book in self.books if book.isbn == isbn]
             return title[0] # Should anyway only be a list of length 1    
