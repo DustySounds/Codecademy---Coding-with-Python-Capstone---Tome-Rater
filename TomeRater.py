@@ -118,6 +118,36 @@ class Non_Fiction(Book):
             grammerFix = 'n'
         return "{t}, a{n} {l} manual on {s}, valued at ${p}".format(t = self.title, n = grammerFix, l = self.level, s = self.subject, p = self.price)
             
+# Helper functions                
+def get_winner(source, method):
+    counts = [method(object) for object in source]
+    winnerCount = max(counts)
+    winners = [object for object in source if method(object) == winnerCount]
+    if len(winners) > 1:
+        print("It's a tie!")
+    return winners
+    
+def get_n_most(n, source, count_method, return_method, key_or_value, prompt_object, prompt_descript):
+    rotating_objects = dict(source) # Real copy of dictionary to temporarily pop values out of.
+    tops = []
+    if n > len(rotating_objects):
+        n = len(rotating_objects) # Ensures against ValueError
+        print('Given requested number of most {descript} {object} exceeded total stored {object} for given instance of TomeRater.\nAll {object} are returned in order of most {descript}.'.format(object = prompt_object, descript = prompt_descript))
+    while len(tops) < n:
+        if key_or_value == "key":
+            counts = [count_method(object) for object in list(rotating_objects)]
+            winnerCount = max(counts)
+            winners = [object for object in list(rotating_objects) if count_method(object) == winnerCount] # Account for ties
+        else:
+            counts = [count_method(object) for object in rotating_objects.values()]
+            winnerCount = max(counts)
+            winners = [value for value, object in rotating_objects.items() if count_method(object) == winnerCount] # Account for ties
+        tops += winners
+        for winner in winners: # Remove tops to find next tier
+            rotating_objects.pop(winner) 
+    tops = tops[:n] # Ties are cut off and not returned
+    results = [return_method(object) for object in tops]
+    return results
             
 # Define TomeRater class - Main application
 class TomeRater:
@@ -204,79 +234,46 @@ class TomeRater:
             print(user)
             
     def most_read_book(self):
-        reads = [self.books[book] for book in list(self.books)]
-        winnerCount = max(reads)
-        winners = [book for book, reads in self.books.items() if reads == winnerCount] # Account for ties
-        if len(winners) > 1:
-            print("It's a tie!")
-        return winners
+        def method(object):
+            return self.books[object]    
+        winners = get_winner(list(self.books), method)
+        return winners     
                 
     def highest_rated_book(self):
-        ratings = [book.get_average_rating() for book in list(self.books)]
-        winnerCount = max(ratings)
-        winners = [book for book in list(self.books) if book.get_average_rating() == winnerCount] # Account for ties
-        if len(winners) > 1:
-            print("It's a tie!")
+        def method(object):
+            return object.get_average_rating()
+        winners = get_winner(list(self.books), method)
         return winners
         
     def most_positive_user(self):
-        ratings = [user.get_average_rating() for user in self.users.values()]
-        winnerCount = max(ratings)
-        winners = [user for user in self.users.values() if user.get_average_rating() == winnerCount] # Account for ties
-        if len(winners) > 1:
-            print("It's a tie!")
+        def method(object):
+            return object.get_average_rating()
+        winners = get_winner(self.users.values(), method)
         return winners
     
     def get_n_most_read_books(self, n):
-        rotating_books = dict(self.books) # Real copy of dictionary to temporarily pop values out of.
-        tops = []
-        if n > len(rotating_books):
-            n = len(rotating_books) # Ensures against ValueError
-            print('Given requested number of most read books exceeded total stored books for given instance of TomeRater.\nAll books are returned in order of most read.')
-        while len(tops) < n:
-            reads = [rotating_books[book] for book in list(rotating_books)]
-            winnerCount = max(reads)
-            winners = [book for book, reads in rotating_books.items() if reads == winnerCount] # Account for ties
-            tops += winners
-            for winner in winners: # Remove tops to find next tier
-                rotating_books.pop(winner) 
-        tops = tops[:n] # Ties are cut off and not returned
-        titles = [book.title for book in tops]
-        return titles
-        
+        def count_method(object):
+            return self.books[object]
+        def return_method(object):
+            return object.title
+        results = get_n_most(n, self.books, count_method, return_method, "key", "books", "read")
+        return results
+    
     def get_n_most_prolific_readers(self, n):
-        rotating_users = dict(self.users) # Real copy of dictionary to temporarily pop values out of.
-        tops = []
-        if n > len(rotating_users):
-            n = len(rotating_users) # Ensures against ValueError
-            print('Given requested number of most prolific readers exceeded total stored users for given instance of TomeRater.\nAll users are returned in order of most prolific.')
-        while len(tops) < n:
-            reads = [len(user.books) for user in rotating_users.values()]
-            winnerCount = max(reads)
-            winners = [email for email, user in rotating_users.items() if len(user.books) == winnerCount] # Account for ties
-            tops += winners
-            for winner in winners: # Remove tops to find next tier
-                rotating_users.pop(winner) 
-        tops = tops[:n] # Ties are cut off and not returned
-        names = [self.users[email].name for email in tops]
-        return names
+        def count_method(object):
+            return len(object.books)
+        def return_method(object):
+            return self.users[object].name
+        results = get_n_most(n, self.users, count_method, return_method, "value", "users", "prolific")
+        return results    
 
     def get_n_most_expensive_books(self, n):
-        rotating_books = dict(self.books) # Real copy of dictionary to temporarily pop values out of.
-        tops = []
-        if n > len(rotating_books):
-            n = len(rotating_books) # Ensures against ValueError
-            print('Given requested number of most expensive books exceeded total stored books for given instance of TomeRater.\nAll books are returned in order of most expensive.')
-        while len(tops) < n:
-            prices = [book.price for book in rotating_books]
-            mostExpPrice = max(prices)
-            mostExps = [book for book in rotating_books if book.price == mostExpPrice] # Account for ties
-            tops += mostExps
-            for mostExp in mostExps:
-                rotating_books.pop(mostExp)
-        tops = tops[:n] # Ties are cut off and not returned
-        titles = [book.title for book in tops]
-        return titles            
+        def count_method(object):
+            return object.price
+        def return_method(object):
+            return object.title
+        results = get_n_most(n, self.books, count_method, return_method, "key", "books", "expensive")
+        return results            
 
     def get_worth_of_user(self, user_email):return sum(prices)
 

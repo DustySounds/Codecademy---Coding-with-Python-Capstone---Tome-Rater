@@ -60,23 +60,26 @@ Tome_Rater.add_book_to_user(novel1, "david@computation.org", 3)
 #print(Tome_Rater2 == Tome_Rater3)
 
 # Test Most Read Books:
-#print(Tome_Rater.get_n_most_read_books(9))
+print("Most n read books")
+print(Tome_Rater.get_n_most_read_books(9))
 
 # Test Most Prolific Readers:
-#print(Tome_Rater.get_n_most_prolific_readers(2))
+print("Most prolific readers")
+print(Tome_Rater.get_n_most_prolific_readers(2))
 
 # Test Price variable:
 #novel1.add_price(5)
 
 # Test Most Expensive Books:
-#print(Tome_Rater.get_n_most_expensive_books(4))
+print("Most n expensive books")
+print(Tome_Rater.get_n_most_expensive_books(3))
 
 # Test User worth:
 #print('$',Tome_Rater.get_worth_of_user("alan@turing.com"))
 #print('$',Tome_Rater.get_worth_of_user("al@g.com")) # Should catch the invalid email
 
 # Test my function of Get Book by ISBN:
-print(Tome_Rater.get_book_by_isbn(10001000)) # Soft Rains
+#print(Tome_Rater.get_book_by_isbn(10001000)) # Soft Rains
 #print(Tome_Rater.get_book_by_isbn(1903847109)) # Invalid
 
 #Uncomment these to test your functions:
